@@ -1,0 +1,73 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        WWWUSER: ${WWWUSER:-1000}
+        WWWGROUP: ${WWWGROUP:-1000}
+    container_name: roomly_app
+    volumes:
+      - ./:/var/www
+    environment:
+      - WWWUSER=${WWWUSER:-1000}
+      - WWWGROUP=${WWWGROUP:-1000}
+    networks:
+      - roomly
+
+  nginx:
+    image: nginx:alpine
+    container_name: roomly_nginx
+    ports:
+      - "${APP_PORT:-8000}:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - roomly
+
+  db:
+    image: mariadb:latest
+    container_name: roomly_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - roomly
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: roomly_phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_USER: ${DB_USERNAME}
+      PMA_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${PMA_EXPOSE_PORT:-8080}:80"
+    depends_on:
+      - db
+    networks:
+      - roomly
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: roomly_mailpit
+    ports:
+      - "${MAILPIT_PORT:-8025}:8025"
+    networks:
+      - roomly
+
+volumes:
+  dbdata:
+
+networks:
+  roomly:
+    driver: bridge
+
