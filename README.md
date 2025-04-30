@@ -14,10 +14,10 @@
 - PHP 8.3 (FPM)
 - Laravel 11
 - Vue 3 + Inertia.js
-- Mariadb (latest)
+- Postgresql 15
 - Nginx
 - Mailpit (перехват почты)
-- phpMyAdmin (управление базой данных)
+- pgAdmin (управление базой данных)
 
 ---
 
@@ -66,7 +66,7 @@ make artisan migrate
 | Сервис         | URL                  |
 |----------------|-----------------------|
 | Frontend/Backend (Nginx + Laravel) | http://localhost:8000 |
-| phpMyAdmin      | http://localhost:8080 |
+| pgAdmin        | http://localhost:8080 |
 | Mailpit (перехват писем) | http://localhost:8025 |
 
 ---

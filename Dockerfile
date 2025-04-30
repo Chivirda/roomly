@@ -1,6 +1,6 @@
 FROM php:8.3-fpm
 
-# Установка системных пакетов
+# Установка системных пакетов, включая libpq-dev для PostgreSQL
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -10,9 +10,10 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libpq-dev \
     npm \
     nodejs \
-    && docker-php-ext-install pdo_mysql mbstring zip exif pcntl
+    && docker-php-ext-install pdo_pgsql pgsql mbstring zip exif pcntl
 
 # Установка Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
